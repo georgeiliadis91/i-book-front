@@ -8,10 +8,10 @@ const publicRoutes: IRoutes[] = [
 	{
 		key: 1,
 		title: 'Home',
-		link: '/home',
+		link: '/',
 		route: {
 			exact: true,
-			path: '/home',
+			path: '/',
 			component: Home,
 		},
 	},

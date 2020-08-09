@@ -1,0 +1,9 @@
+@url = http://fakerestapi.azurewebsites.net/api
+
+
+
+### Books
+GET {{url}}/Books
+
+### Single Book
+GET {{url}}/Books/1

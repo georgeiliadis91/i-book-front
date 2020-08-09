@@ -1,9 +1,15 @@
-import React from 'react';
-import './footer.style.scss';
-interface Props {}
+import React from 'react'
+
+interface Props {
+	
+}
 
 const Footer = (props: Props) => {
-	return <footer>Footer</footer>;
-};
+	return (
+		<div>
+			Footer
+		</div>
+	)
+}
 
-export default Footer;
+export default Footer

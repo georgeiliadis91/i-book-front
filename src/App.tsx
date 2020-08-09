@@ -1,9 +1,9 @@
 import React, { lazy, Suspense, useMemo } from 'react';
-import './App.scss';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Loading from './components/ui/Loading';
 import Layout from './components/ui/Layout';
 
+import CssBaseline from '@material-ui/core/CssBaseline';
 // Routes
 import publicRoutes from './containers/publicRoutes';
 
@@ -23,12 +23,13 @@ function App() {
 		}
 
 		return null;
-	}, [publicRoutes]);
+	}, []);
 
 	console.log('thore are teh routes', pubRoutes);
 
 	return (
 		<BrowserRouter>
+			<CssBaseline />
 			<Header />
 			<Switch>
 				<Suspense fallback={<Loading />}>
