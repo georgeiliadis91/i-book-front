@@ -4,9 +4,10 @@ import { AppBar } from '../../../../imports/appbar/';
 import { Toolbar } from '../../../../imports/toolbar/';
 import { Typography } from '../../../../imports/typography/';
 import { Button, IconButton } from '../../../../imports/buttons/';
-import { AccountCircle } from '../../../../imports/icons/';
+import { AccountCircle, ShoppingCartIcon } from '../../../../imports/icons/';
 import { Menu, MenuItem } from '../../../../imports/menu/';
 import { createStyles, makeStyles } from '../../../../imports/styles';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -30,7 +31,7 @@ interface Props {
 
 const Header: React.FC<Props> = ({ isLogged, logout, login }) => {
 	const classes = useStyles();
-
+	const history = useHistory();
 	const [auth, setAuth] = useState(false);
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
@@ -45,6 +46,12 @@ const Header: React.FC<Props> = ({ isLogged, logout, login }) => {
 
 	const handleClose = () => {
 		setAnchorEl(null);
+		history.push('/profile');
+	};
+
+	const handleLogin = () => {
+		setAnchorEl(null);
+		login();
 	};
 
 	return (
@@ -56,6 +63,14 @@ const Header: React.FC<Props> = ({ isLogged, logout, login }) => {
 					</Typography>
 					{isLogged ? (
 						<div>
+							<IconButton
+								aria-label="shopping cart"
+								aria-controls="menu-appbar"
+								aria-haspopup="true"
+								color="inherit"
+							>
+								<ShoppingCartIcon />
+							</IconButton>
 							<IconButton
 								aria-label="account of current user"
 								aria-controls="menu-appbar"
@@ -85,7 +100,7 @@ const Header: React.FC<Props> = ({ isLogged, logout, login }) => {
 							</Menu>
 						</div>
 					) : (
-						<Button color="inherit" onClick={login}>
+						<Button color="inherit" onClick={handleLogin}>
 							Login
 						</Button>
 					)}

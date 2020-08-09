@@ -1,3 +1,5 @@
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
-export { AccountCircle, MenuIcon };
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+
+export { AccountCircle, MenuIcon, ShoppingCartIcon };

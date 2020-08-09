@@ -11,10 +11,10 @@ const publicRoutes: IRoutes[] = [
 	{
 		key: 1,
 		title: 'Home',
-		link: '/',
+		link: ['/', '/home'],
 		route: {
 			exact: true,
-			path: '/',
+			path: ['/', '/home'],
 			component: Home,
 		},
 	},

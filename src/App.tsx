@@ -1,11 +1,5 @@
 import React, { lazy, Suspense, useMemo, useState, useEffect } from 'react';
-import {
-	BrowserRouter,
-	Route,
-	Switch,
-	useHistory,
-	RouteComponentProps,
-} from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Loading from './components/share/Loading';
 import Layout from './components/ui/Layout';
 
@@ -17,11 +11,9 @@ import { isValidUser } from './services/userApi';
 
 import Header from './components/ui/Layout/components/Header';
 import Footer from './components/ui/Layout/components/Footer';
+import PrivateRoute from './components/share/PrivateRoute/PrivateRoute';
 
-interface Props extends RouteComponentProps {}
-
-const App: React.FC<Props> = () => {
-	const history = useHistory;();
+const App = () => {
 	const [user, setUser] = useState<any>(
 		JSON.parse(localStorage.getItem('user') as string)
 	);
@@ -41,18 +33,16 @@ const App: React.FC<Props> = () => {
 	const logout = async () => {
 		await localStorage.removeItem('user');
 		setIsLogged(false);
-		history.push('/');
 	};
 
 	const login = async () => {
 		await localStorage.setItem('user', JSON.stringify({ token: true }));
-		const userStatus = await isValidUser(user.token);
-		setIsLogged(userStatus);
-		history.push('/');
+		// const userStatus = await isValidUser(user.token);
+		setIsLogged(true);
 	};
 
 	const pubRoutes = useMemo(() => {
-		if (publicRoutes) {
+		if (publicRoutes.length > 0) {
 			const routes = publicRoutes.map((item) => (
 				<Route {...item.route} key={item.key} />
 			));
@@ -62,14 +52,14 @@ const App: React.FC<Props> = () => {
 	}, []);
 
 	const privRoutes = useMemo(() => {
-		if (privateRoutes && isLogged) {
+		if (privateRoutes.length > 0 && isLogged) {
 			const routes = privateRoutes.map((item) => (
-				<Route {...item.route} key={item.key} />
+				<PrivateRoute isLogged={isLogged} {...item.route} key={item.key} />
 			));
 			return routes;
 		}
 		return null;
-	}, []);
+	}, [isLogged]);
 
 	return (
 		<BrowserRouter>
@@ -77,14 +67,13 @@ const App: React.FC<Props> = () => {
 			<Header isLogged={isLogged} logout={logout} login={login} />
 			<Switch>
 				<Layout>
-					<Suspense fallback={<Loading />}>
-						{pubRoutes}
-						{privRoutes}
-					</Suspense>
+					<Suspense fallback={<Loading />}>{pubRoutes}</Suspense>
+					<Suspense fallback={<Loading />}>{privRoutes}</Suspense>
 				</Layout>
 				<Route component={() => <h1>404</h1>} />
 			</Switch>
-			<Footer />
+			{/* TODO enable the footer at a later stage */}
+			{/* <Footer /> */}
 		</BrowserRouter>
 	);
 };
