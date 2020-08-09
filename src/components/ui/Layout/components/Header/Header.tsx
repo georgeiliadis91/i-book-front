@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { Theme } from '@material-ui/core/styles';
 import { AppBar } from '../../../../imports/appbar/';
 import { Toolbar } from '../../../../imports/toolbar/';
 import { Typography } from '../../../../imports/typography/';
 import { Button, IconButton } from '../../../../imports/buttons/';
 import { AccountCircle } from '../../../../imports/icons/';
 import { Menu, MenuItem } from '../../../../imports/menu/';
+import { createStyles, makeStyles } from '../../../../imports/styles';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -21,7 +22,13 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-const Header = () => {
+interface Props {
+	isLogged: boolean;
+	logout: () => void;
+	login: () => void;
+}
+
+const Header: React.FC<Props> = ({ isLogged, logout, login }) => {
 	const classes = useStyles();
 
 	const [auth, setAuth] = useState(false);
@@ -47,7 +54,7 @@ const Header = () => {
 					<Typography variant="h6" className={classes.title}>
 						i-book.gr
 					</Typography>
-					{auth ? (
+					{isLogged ? (
 						<div>
 							<IconButton
 								aria-label="account of current user"
@@ -74,11 +81,13 @@ const Header = () => {
 								onClose={handleClose}
 							>
 								<MenuItem onClick={handleClose}>Profile</MenuItem>
-								<MenuItem onClick={handleClose}>My account</MenuItem>
+								<MenuItem onClick={logout}>Exit</MenuItem>
 							</Menu>
 						</div>
 					) : (
-						<Button color="inherit">Login</Button>
+						<Button color="inherit" onClick={login}>
+							Login
+						</Button>
 					)}
 				</Toolbar>
 			</AppBar>

@@ -1,11 +1,14 @@
 import { IAuthor } from './author';
 
 export interface IBook {
-	id: number;
-	name: string;
+	ID: number;
+	Title: string;
 	image?: string[];
-	price: number;
-	sn: number;
-	description: string;
-	author: IAuthor[];
+	price?: number;
+	sn?: number;
+	Description: string;
+	Excerpt?: string;
+	PublishDate?: Date;
+	author?: IAuthor[];
+	PageCount?: number;
 }

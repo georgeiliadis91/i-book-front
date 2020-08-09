@@ -12,6 +12,7 @@ class API {
 	constructor(private config: IApiConfig = {}) {
 		this.config.baseURL =
 			this.config.baseURL || process.env.REACT_APP_BOOK_API_TESTING;
+		console.log('url',  process.env.REACT_APP_BOOK_API_TESTING);
 	}
 
 	public async get(url: string): Promise<any> {
