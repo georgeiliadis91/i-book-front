@@ -30,7 +30,7 @@ const Search = (props: Props) => {
 		<Paper className={classes.root} elevation={1}>
 			Search
 			<form onSubmit={handleSubmit(onSubmit)}>
-				<input name="search" ref={register({ required: true })} />
+				<input name="search" type="text" ref={register({ required: true })} />
 				{/* errors will return when field validation fails  */}
 				{errors.search && <span>This field is required</span>}
 

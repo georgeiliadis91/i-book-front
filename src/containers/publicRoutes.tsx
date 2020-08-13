@@ -6,6 +6,8 @@ const About = lazy(() => import('./public/about'));
 const Book = lazy(() => import('./public/book'));
 const BookSearch = lazy(() => import('./public/booksearch'));
 const Author = lazy(() => import('./public/author'));
+const Login = lazy(() => import('./public/login'));
+const Register = lazy(() => import('./public/register'));
 
 const publicRoutes: IRoutes[] = [
 	{
@@ -56,6 +58,26 @@ const publicRoutes: IRoutes[] = [
 			exact: true,
 			path: '/author/:ud',
 			component: Author,
+		},
+	},
+	{
+		key: 6,
+		title: 'Login',
+		link: '/login',
+		route: {
+			exact: true,
+			path: '/login',
+			component: Login,
+		},
+	},
+	{
+		key: 7,
+		title: 'Register',
+		link: '/register',
+		route: {
+			exact: true,
+			path: '/register',
+			component: Register,
 		},
 	},
 ];

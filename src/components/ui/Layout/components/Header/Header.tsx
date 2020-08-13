@@ -49,9 +49,14 @@ const Header: React.FC<Props> = ({ isLogged, logout, login }) => {
 		history.push('/profile');
 	};
 
+	// const handleLogin = () => {
+	// 	setAnchorEl(null);
+	// 	login();
+	// };
+
 	const handleLogin = () => {
 		setAnchorEl(null);
-		login();
+		history.push('/login');
 	};
 
 	return (
