@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState, Dispatch, SetStateAction } from 'react';
 import { makeStyles, createStyles } from '../../../components/imports/styles';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { Paper } from '../../../components/imports/paper/paper';
 import { useForm } from 'react-hook-form';
 import { Typography } from '../../../components/imports/typography/typography';
 import { Container, Grid } from '../../../components/imports/grid/grid';
@@ -16,6 +15,15 @@ import {
 import Link from '@material-ui/core/Link';
 import { Button } from '../../../components/imports/buttons/buttons';
 import { Checkbox } from '../../../components/imports/checkbox/checkbox';
+import { useLoginMutation } from '../../../generated/graphql';
+import {
+	useHistory,
+	RouteComponentProps,
+	RouteChildrenProps,
+	RouteProps,
+} from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import userActions from '../../../redux/user/actions';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -43,19 +51,47 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 	})
 );
+
 type Inputs = {
 	search: string;
 	password: string;
 	remember: string;
 };
 
-interface Props {}
-
-const Login = (props: Props) => {
+const Login = () => {
 	const classes = useStyles();
+	const history = useHistory();
+	const dispatch = useDispatch();
 	const { register, handleSubmit, watch, errors } = useForm<Inputs>();
-	// TODO Make api call for searchin DB , send user to result page
-	const onSubmit = (data: any) => console.log(data);
+	const [login] = useLoginMutation();
+	const [gqlError, setGqlError] = useState(false);
+
+	const setRememberUserData = async (data: any) => {
+		await localStorage.setItem('jwtToken', data.login.jwt);
+		await localStorage.setItem('user', JSON.stringify(data.login.user));
+		dispatch(userActions.signIn(data.login.jwt));
+		history.push('/search');
+	};
+
+	const onSubmit = async (data: any) => {
+		try {
+			const response = await login({
+				variables: {
+					input: {
+						identifier: data.identifier,
+						password: data.password,
+					},
+				},
+			});
+			// TODO handle temp login with variable
+			// TODO and handle localhost login with localStorage
+			if (data.remember) {
+				setRememberUserData(response.data);
+			}
+		} catch (error) {
+			setGqlError(true);
+		}
+	};
 
 	return (
 		<Container component="main" maxWidth="xs">
@@ -77,10 +113,10 @@ const Login = (props: Props) => {
 						inputRef={register}
 						required
 						fullWidth
-						id="email"
-						label="Email Address"
-						name="email"
-						autoComplete="email"
+						id="identifier"
+						label="Username"
+						name="identifier"
+						autoComplete="identifier"
 						autoFocus
 					/>
 					<TextField
@@ -129,6 +165,13 @@ const Login = (props: Props) => {
 						</Grid>
 					</Grid>
 				</form>
+				<div>
+					{gqlError && (
+						<Typography variant="body1">
+							There has been an error with your data
+						</Typography>
+					)}
+				</div>
 			</div>
 		</Container>
 	);

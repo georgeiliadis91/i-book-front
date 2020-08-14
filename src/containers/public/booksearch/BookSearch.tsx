@@ -11,16 +11,15 @@ const BookSearch: React.FC<Props> = () => {
 
 	return (
 		<div>
-			{data.books &&
-				data.books.map(
-					(item) =>
-						item && (
-							<div key={item.id}>
-								<p>Title: {item.Title}</p>
-								<p>Description: {item.Description}</p>
-							</div>
-						)
-				)}
+			{data.books?.map(
+				(item?) =>
+					item && (
+						<div key={item.id}>
+							<p>Title: {item.Title}</p>
+							<p>Description: {item.Description}</p>
+						</div>
+					)
+			)}
 		</div>
 	);
 };

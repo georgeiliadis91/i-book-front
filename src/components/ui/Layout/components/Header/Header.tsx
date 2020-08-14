@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import { Theme } from '@material-ui/core/styles';
 import { AppBar } from '../../../../imports/appbar/';
 import { Toolbar } from '../../../../imports/toolbar/';
@@ -24,12 +24,12 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface Props {
-	isLogged: boolean;
+	token: string;
 	logout: () => void;
-	login: () => void;
+	user: any;
 }
 
-const Header: React.FC<Props> = ({ isLogged, logout, login }) => {
+const Header: React.FC<Props> = ({ token, logout, user }) => {
 	const classes = useStyles();
 	const history = useHistory();
 	const [auth, setAuth] = useState(false);
@@ -59,6 +59,11 @@ const Header: React.FC<Props> = ({ isLogged, logout, login }) => {
 		history.push('/login');
 	};
 
+	const handleRegister = () => {
+		setAnchorEl(null);
+		history.push('/register');
+	};
+
 	return (
 		<div className={classes.root}>
 			<AppBar position="static">
@@ -66,7 +71,7 @@ const Header: React.FC<Props> = ({ isLogged, logout, login }) => {
 					<Typography variant="h6" className={classes.title}>
 						i-book.gr
 					</Typography>
-					{isLogged ? (
+					{token || token != '' ? (
 						<div>
 							<IconButton
 								aria-label="shopping cart"
@@ -105,9 +110,14 @@ const Header: React.FC<Props> = ({ isLogged, logout, login }) => {
 							</Menu>
 						</div>
 					) : (
-						<Button color="inherit" onClick={handleLogin}>
-							Login
-						</Button>
+						<Fragment>
+							<Button color="inherit" onClick={handleLogin}>
+								Login
+							</Button>
+							<Button color="inherit" onClick={handleRegister}>
+								Sign Up
+							</Button>
+						</Fragment>
 					)}
 				</Toolbar>
 			</AppBar>

@@ -12,26 +12,39 @@ import { isValidUser } from './services/userApi';
 import Header from './components/ui/Layout/components/Header';
 import Footer from './components/ui/Layout/components/Footer';
 import PrivateRoute from './components/share/PrivateRoute/PrivateRoute';
+import { useDispatch, useSelector } from 'react-redux';
+import userActions from './redux/user/actions';
+import { AppState } from './redux/store';
 
 const App = () => {
 	const [user, setUser] = useState<any>(
 		JSON.parse(localStorage.getItem('user') as string)
 	);
+	const dispatch = useDispatch();
+
 	const [isLogged, setIsLogged] = useState(false);
 
 	useEffect(() => {
 		if (user) {
 			const fetchUserData = async () => {
-				const userStatus = await isValidUser(user.token);
-				setIsLogged(userStatus);
+				// const userStatus = await isValidUser(user.token);
+				setIsLogged(true);
 			};
+
 			fetchUserData();
 		}
 	}, [user]);
 
+	const { token } = useSelector((state: AppState) => {
+		return {
+			token: state.User.token,
+		};
+	});
+
 	// TODO handle those 2 functions
 	const logout = async () => {
 		await localStorage.removeItem('user');
+		dispatch(userActions.signOut());
 		setIsLogged(false);
 	};
 
@@ -64,7 +77,7 @@ const App = () => {
 	return (
 		<BrowserRouter>
 			<CssBaseline />
-			<Header isLogged={isLogged} logout={logout} login={login} />
+			<Header token={token} logout={logout} user={user} />
 			<Switch>
 				<Layout>
 					<Suspense fallback={<Loading />}>{pubRoutes}</Suspense>
