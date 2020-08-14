@@ -3,36 +3,33 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import 'fontsource-roboto';
 // import * as serviceWorker from './serviceWorker';
-import { ApolloClient, InMemoryCache } from '@apollo/client';
+import {
+	ApolloClient,
+	InMemoryCache,
+	HttpLink,
+	ApolloLink,
+} from '@apollo/client';
 import { ApolloProvider } from '@apollo/client';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import { setContext } from '@apollo/client/link/context';
 
-const authLink = setContext((_, { headers }) => {
-	// get the authentication token from local storage if it exists
-	const token = localStorage.getItem('token');
-	// return the headers to the context so httpLink can read them
-	return {
+const authLink = new ApolloLink((operation, forward) => {
+	// Retrieve the authorization token from local storage.
+	const token = localStorage.getItem('jwtToken');
+	operation.setContext({
 		headers: {
-			...headers,
 			authorization: token ? `Bearer ${token}` : '',
 		},
-	};
+	});
+	return forward(operation);
 });
 
-//  TODO fix the header auth thingy here.
-// const accessToken = localStorage.getItem('jwtToken');
-// const auth = setContext((operation, context) => ({
-// 	headers: {
-// 		Authorization: `Bearer ${accessToken}`,
-// 	},
-// }));
+const httpLink = new HttpLink({ uri: 'http://localhost:1337/graphql' });
 
 const client = new ApolloClient({
-	uri: 'http://localhost:1337/graphql',
+	link: authLink.concat(httpLink),
 	cache: new InMemoryCache(),
-	credentials: 'include',
 	// auth,
 });
 
