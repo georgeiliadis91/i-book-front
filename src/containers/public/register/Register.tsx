@@ -72,7 +72,7 @@ const Register: React.FC = (props: Props) => {
 		await localStorage.setItem('jwtToken', data.register.jwt);
 		await localStorage.setItem('user', JSON.stringify(data.register.user));
 		dispatch(userActions.registerUser(data.register.jwt));
-		history.push('/search');
+		history.push('/profile');
 	};
 
 	const onSubmit = async (data: any) => {

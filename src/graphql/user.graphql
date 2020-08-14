@@ -1,0 +1,9 @@
+query User($id: ID!) {
+	user(id: $id) {
+		username
+		email
+		confirmed
+		provider
+		created_at
+	}
+}

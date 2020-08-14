@@ -14,18 +14,21 @@ export type Scalars = {
   DateTime: any;
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: any;
+  /** The `Long` scalar type represents 52-bit integers */
+  Long: any;
+  /** A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
+  Date: any;
   /** The `Upload` scalar type represents a file upload. */
   Upload: any;
   /** A time string with format: HH:mm:ss.SSS */
   Time: any;
-  /** A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
-  Date: any;
-  /** The `Long` scalar type represents 52-bit integers */
-  Long: any;
 };
 
 export type Query = {
   __typename?: 'Query';
+  author?: Maybe<Author>;
+  authors?: Maybe<Array<Maybe<Author>>>;
+  authorsConnection?: Maybe<AuthorConnection>;
   book?: Maybe<Book>;
   books?: Maybe<Array<Maybe<Book>>>;
   booksConnection?: Maybe<BookConnection>;
@@ -39,6 +42,27 @@ export type Query = {
   users?: Maybe<Array<Maybe<UsersPermissionsUser>>>;
   usersConnection?: Maybe<UsersPermissionsUserConnection>;
   me?: Maybe<UsersPermissionsMe>;
+};
+
+
+export type QueryAuthorArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryAuthorsArgs = {
+  sort?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  start?: Maybe<Scalars['Int']>;
+  where?: Maybe<Scalars['JSON']>;
+};
+
+
+export type QueryAuthorsConnectionArgs = {
+  sort?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  start?: Maybe<Scalars['Int']>;
+  where?: Maybe<Scalars['JSON']>;
 };
 
 
@@ -120,15 +144,24 @@ export type QueryUsersConnectionArgs = {
   where?: Maybe<Scalars['JSON']>;
 };
 
-export type Book = {
-  __typename?: 'Book';
+export type Author = {
+  __typename?: 'Author';
   id: Scalars['ID'];
   created_at: Scalars['DateTime'];
   updated_at: Scalars['DateTime'];
-  Title: Scalars['String'];
-  Description?: Maybe<Scalars['String']>;
+  Fname?: Maybe<Scalars['String']>;
+  Lname?: Maybe<Scalars['String']>;
   created_by?: Maybe<AdminUser>;
   updated_by?: Maybe<AdminUser>;
+  books?: Maybe<Array<Maybe<Book>>>;
+};
+
+
+export type AuthorBooksArgs = {
+  sort?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  start?: Maybe<Scalars['Int']>;
+  where?: Maybe<Scalars['JSON']>;
 };
 
 
@@ -138,6 +171,96 @@ export type AdminUser = {
   username?: Maybe<Scalars['String']>;
 };
 
+
+export type Book = {
+  __typename?: 'Book';
+  id: Scalars['ID'];
+  created_at: Scalars['DateTime'];
+  updated_at: Scalars['DateTime'];
+  Title: Scalars['String'];
+  Description?: Maybe<Scalars['String']>;
+  ISBN: Scalars['Long'];
+  Format?: Maybe<Scalars['String']>;
+  Publication_date?: Maybe<Scalars['Date']>;
+  Pages?: Maybe<Scalars['Int']>;
+  Edition?: Maybe<Scalars['String']>;
+  Dimensions?: Maybe<Scalars['String']>;
+  Weight?: Maybe<Scalars['String']>;
+  Condition?: Maybe<Scalars['String']>;
+  Availiable?: Maybe<Scalars['Boolean']>;
+  Image_url?: Maybe<Scalars['String']>;
+  author?: Maybe<Author>;
+  created_by?: Maybe<AdminUser>;
+  updated_by?: Maybe<AdminUser>;
+};
+
+
+
+export type AuthorConnection = {
+  __typename?: 'AuthorConnection';
+  values?: Maybe<Array<Maybe<Author>>>;
+  groupBy?: Maybe<AuthorGroupBy>;
+  aggregate?: Maybe<AuthorAggregator>;
+};
+
+export type AuthorGroupBy = {
+  __typename?: 'AuthorGroupBy';
+  id?: Maybe<Array<Maybe<AuthorConnectionId>>>;
+  created_at?: Maybe<Array<Maybe<AuthorConnectionCreated_At>>>;
+  updated_at?: Maybe<Array<Maybe<AuthorConnectionUpdated_At>>>;
+  Fname?: Maybe<Array<Maybe<AuthorConnectionFname>>>;
+  Lname?: Maybe<Array<Maybe<AuthorConnectionLname>>>;
+  created_by?: Maybe<Array<Maybe<AuthorConnectionCreated_By>>>;
+  updated_by?: Maybe<Array<Maybe<AuthorConnectionUpdated_By>>>;
+};
+
+export type AuthorConnectionId = {
+  __typename?: 'AuthorConnectionId';
+  key?: Maybe<Scalars['ID']>;
+  connection?: Maybe<AuthorConnection>;
+};
+
+export type AuthorConnectionCreated_At = {
+  __typename?: 'AuthorConnectionCreated_at';
+  key?: Maybe<Scalars['DateTime']>;
+  connection?: Maybe<AuthorConnection>;
+};
+
+export type AuthorConnectionUpdated_At = {
+  __typename?: 'AuthorConnectionUpdated_at';
+  key?: Maybe<Scalars['DateTime']>;
+  connection?: Maybe<AuthorConnection>;
+};
+
+export type AuthorConnectionFname = {
+  __typename?: 'AuthorConnectionFname';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<AuthorConnection>;
+};
+
+export type AuthorConnectionLname = {
+  __typename?: 'AuthorConnectionLname';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<AuthorConnection>;
+};
+
+export type AuthorConnectionCreated_By = {
+  __typename?: 'AuthorConnectionCreated_by';
+  key?: Maybe<Scalars['ID']>;
+  connection?: Maybe<AuthorConnection>;
+};
+
+export type AuthorConnectionUpdated_By = {
+  __typename?: 'AuthorConnectionUpdated_by';
+  key?: Maybe<Scalars['ID']>;
+  connection?: Maybe<AuthorConnection>;
+};
+
+export type AuthorAggregator = {
+  __typename?: 'AuthorAggregator';
+  count?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']>;
+};
 
 export type BookConnection = {
   __typename?: 'BookConnection';
@@ -153,6 +276,17 @@ export type BookGroupBy = {
   updated_at?: Maybe<Array<Maybe<BookConnectionUpdated_At>>>;
   Title?: Maybe<Array<Maybe<BookConnectionTitle>>>;
   Description?: Maybe<Array<Maybe<BookConnectionDescription>>>;
+  ISBN?: Maybe<Array<Maybe<BookConnectionIsbn>>>;
+  Format?: Maybe<Array<Maybe<BookConnectionFormat>>>;
+  Publication_date?: Maybe<Array<Maybe<BookConnectionPublication_Date>>>;
+  Pages?: Maybe<Array<Maybe<BookConnectionPages>>>;
+  Edition?: Maybe<Array<Maybe<BookConnectionEdition>>>;
+  Dimensions?: Maybe<Array<Maybe<BookConnectionDimensions>>>;
+  Weight?: Maybe<Array<Maybe<BookConnectionWeight>>>;
+  Condition?: Maybe<Array<Maybe<BookConnectionCondition>>>;
+  Availiable?: Maybe<Array<Maybe<BookConnectionAvailiable>>>;
+  Image_url?: Maybe<Array<Maybe<BookConnectionImage_Url>>>;
+  author?: Maybe<Array<Maybe<BookConnectionAuthor>>>;
   created_by?: Maybe<Array<Maybe<BookConnectionCreated_By>>>;
   updated_by?: Maybe<Array<Maybe<BookConnectionUpdated_By>>>;
 };
@@ -187,6 +321,72 @@ export type BookConnectionDescription = {
   connection?: Maybe<BookConnection>;
 };
 
+export type BookConnectionIsbn = {
+  __typename?: 'BookConnectionISBN';
+  key?: Maybe<Scalars['ID']>;
+  connection?: Maybe<BookConnection>;
+};
+
+export type BookConnectionFormat = {
+  __typename?: 'BookConnectionFormat';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<BookConnection>;
+};
+
+export type BookConnectionPublication_Date = {
+  __typename?: 'BookConnectionPublication_date';
+  key?: Maybe<Scalars['ID']>;
+  connection?: Maybe<BookConnection>;
+};
+
+export type BookConnectionPages = {
+  __typename?: 'BookConnectionPages';
+  key?: Maybe<Scalars['Int']>;
+  connection?: Maybe<BookConnection>;
+};
+
+export type BookConnectionEdition = {
+  __typename?: 'BookConnectionEdition';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<BookConnection>;
+};
+
+export type BookConnectionDimensions = {
+  __typename?: 'BookConnectionDimensions';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<BookConnection>;
+};
+
+export type BookConnectionWeight = {
+  __typename?: 'BookConnectionWeight';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<BookConnection>;
+};
+
+export type BookConnectionCondition = {
+  __typename?: 'BookConnectionCondition';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<BookConnection>;
+};
+
+export type BookConnectionAvailiable = {
+  __typename?: 'BookConnectionAvailiable';
+  key?: Maybe<Scalars['Boolean']>;
+  connection?: Maybe<BookConnection>;
+};
+
+export type BookConnectionImage_Url = {
+  __typename?: 'BookConnectionImage_url';
+  key?: Maybe<Scalars['String']>;
+  connection?: Maybe<BookConnection>;
+};
+
+export type BookConnectionAuthor = {
+  __typename?: 'BookConnectionAuthor';
+  key?: Maybe<Scalars['ID']>;
+  connection?: Maybe<BookConnection>;
+};
+
 export type BookConnectionCreated_By = {
   __typename?: 'BookConnectionCreated_by';
   key?: Maybe<Scalars['ID']>;
@@ -203,6 +403,30 @@ export type BookAggregator = {
   __typename?: 'BookAggregator';
   count?: Maybe<Scalars['Int']>;
   totalCount?: Maybe<Scalars['Int']>;
+  sum?: Maybe<BookAggregatorSum>;
+  avg?: Maybe<BookAggregatorAvg>;
+  min?: Maybe<BookAggregatorMin>;
+  max?: Maybe<BookAggregatorMax>;
+};
+
+export type BookAggregatorSum = {
+  __typename?: 'BookAggregatorSum';
+  Pages?: Maybe<Scalars['Float']>;
+};
+
+export type BookAggregatorAvg = {
+  __typename?: 'BookAggregatorAvg';
+  Pages?: Maybe<Scalars['Float']>;
+};
+
+export type BookAggregatorMin = {
+  __typename?: 'BookAggregatorMin';
+  Pages?: Maybe<Scalars['Float']>;
+};
+
+export type BookAggregatorMax = {
+  __typename?: 'BookAggregatorMax';
+  Pages?: Maybe<Scalars['Float']>;
 };
 
 export type UploadFile = {
@@ -237,7 +461,7 @@ export type UploadFileRelatedArgs = {
   where?: Maybe<Scalars['JSON']>;
 };
 
-export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Book | BookConnection | BookAggregator | BookGroupBy | BookConnectionId | BookConnectionCreated_At | BookConnectionUpdated_At | BookConnectionTitle | BookConnectionDescription | BookConnectionCreated_By | BookConnectionUpdated_By | CreateBookPayload | UpdateBookPayload | DeleteBookPayload | UploadFile | UploadFileConnection | UploadFileAggregator | UploadFileAggregatorSum | UploadFileAggregatorAvg | UploadFileAggregatorMin | UploadFileAggregatorMax | UploadFileGroupBy | UploadFileConnectionId | UploadFileConnectionCreated_At | UploadFileConnectionUpdated_At | UploadFileConnectionName | UploadFileConnectionAlternativeText | UploadFileConnectionCaption | UploadFileConnectionWidth | UploadFileConnectionHeight | UploadFileConnectionFormats | UploadFileConnectionHash | UploadFileConnectionExt | UploadFileConnectionMime | UploadFileConnectionSize | UploadFileConnectionUrl | UploadFileConnectionPreviewUrl | UploadFileConnectionProvider | UploadFileConnectionProvider_Metadata | UploadFileConnectionCreated_By | UploadFileConnectionUpdated_By | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsRoleConnection | UsersPermissionsRoleAggregator | UsersPermissionsRoleGroupBy | UsersPermissionsRoleConnectionId | UsersPermissionsRoleConnectionName | UsersPermissionsRoleConnectionDescription | UsersPermissionsRoleConnectionType | UsersPermissionsRoleConnectionCreated_By | UsersPermissionsRoleConnectionUpdated_By | CreateRolePayload | UpdateRolePayload | DeleteRolePayload | UsersPermissionsUser | UsersPermissionsUserConnection | UsersPermissionsUserAggregator | UsersPermissionsUserGroupBy | UsersPermissionsUserConnectionId | UsersPermissionsUserConnectionCreated_At | UsersPermissionsUserConnectionUpdated_At | UsersPermissionsUserConnectionUsername | UsersPermissionsUserConnectionEmail | UsersPermissionsUserConnectionProvider | UsersPermissionsUserConnectionConfirmed | UsersPermissionsUserConnectionBlocked | UsersPermissionsUserConnectionRole | UsersPermissionsUserConnectionCreated_By | UsersPermissionsUserConnectionUpdated_By | CreateUserPayload | UpdateUserPayload | DeleteUserPayload;
+export type Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Author | AuthorConnection | AuthorAggregator | AuthorGroupBy | AuthorConnectionId | AuthorConnectionCreated_At | AuthorConnectionUpdated_At | AuthorConnectionFname | AuthorConnectionLname | AuthorConnectionCreated_By | AuthorConnectionUpdated_By | CreateAuthorPayload | UpdateAuthorPayload | DeleteAuthorPayload | Book | BookConnection | BookAggregator | BookAggregatorSum | BookAggregatorAvg | BookAggregatorMin | BookAggregatorMax | BookGroupBy | BookConnectionId | BookConnectionCreated_At | BookConnectionUpdated_At | BookConnectionTitle | BookConnectionDescription | BookConnectionIsbn | BookConnectionFormat | BookConnectionPublication_Date | BookConnectionPages | BookConnectionEdition | BookConnectionDimensions | BookConnectionWeight | BookConnectionCondition | BookConnectionAvailiable | BookConnectionImage_Url | BookConnectionAuthor | BookConnectionCreated_By | BookConnectionUpdated_By | CreateBookPayload | UpdateBookPayload | DeleteBookPayload | UploadFile | UploadFileConnection | UploadFileAggregator | UploadFileAggregatorSum | UploadFileAggregatorAvg | UploadFileAggregatorMin | UploadFileAggregatorMax | UploadFileGroupBy | UploadFileConnectionId | UploadFileConnectionCreated_At | UploadFileConnectionUpdated_At | UploadFileConnectionName | UploadFileConnectionAlternativeText | UploadFileConnectionCaption | UploadFileConnectionWidth | UploadFileConnectionHeight | UploadFileConnectionFormats | UploadFileConnectionHash | UploadFileConnectionExt | UploadFileConnectionMime | UploadFileConnectionSize | UploadFileConnectionUrl | UploadFileConnectionPreviewUrl | UploadFileConnectionProvider | UploadFileConnectionProvider_Metadata | UploadFileConnectionCreated_By | UploadFileConnectionUpdated_By | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsRoleConnection | UsersPermissionsRoleAggregator | UsersPermissionsRoleGroupBy | UsersPermissionsRoleConnectionId | UsersPermissionsRoleConnectionName | UsersPermissionsRoleConnectionDescription | UsersPermissionsRoleConnectionType | UsersPermissionsRoleConnectionCreated_By | UsersPermissionsRoleConnectionUpdated_By | CreateRolePayload | UpdateRolePayload | DeleteRolePayload | UsersPermissionsUser | UsersPermissionsUserConnection | UsersPermissionsUserAggregator | UsersPermissionsUserGroupBy | UsersPermissionsUserConnectionId | UsersPermissionsUserConnectionCreated_At | UsersPermissionsUserConnectionUpdated_At | UsersPermissionsUserConnectionUsername | UsersPermissionsUserConnectionEmail | UsersPermissionsUserConnectionProvider | UsersPermissionsUserConnectionConfirmed | UsersPermissionsUserConnectionBlocked | UsersPermissionsUserConnectionRole | UsersPermissionsUserConnectionCreated_By | UsersPermissionsUserConnectionUpdated_By | CreateUserPayload | UpdateUserPayload | DeleteUserPayload;
 
 export type UsersPermissionsMe = {
   __typename?: 'UsersPermissionsMe';
@@ -266,6 +490,21 @@ export type UsersPermissionsLoginPayload = {
 export type UserPermissionsPasswordPayload = {
   __typename?: 'UserPermissionsPasswordPayload';
   ok: Scalars['Boolean'];
+};
+
+export type CreateAuthorPayload = {
+  __typename?: 'createAuthorPayload';
+  author?: Maybe<Author>;
+};
+
+export type UpdateAuthorPayload = {
+  __typename?: 'updateAuthorPayload';
+  author?: Maybe<Author>;
+};
+
+export type DeleteAuthorPayload = {
+  __typename?: 'deleteAuthorPayload';
+  author?: Maybe<Author>;
 };
 
 export type CreateBookPayload = {
@@ -706,6 +945,9 @@ export type DeleteUserPayload = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createAuthor?: Maybe<CreateAuthorPayload>;
+  updateAuthor?: Maybe<UpdateAuthorPayload>;
+  deleteAuthor?: Maybe<DeleteAuthorPayload>;
   createBook?: Maybe<CreateBookPayload>;
   updateBook?: Maybe<UpdateBookPayload>;
   deleteBook?: Maybe<DeleteBookPayload>;
@@ -728,6 +970,21 @@ export type Mutation = {
   forgotPassword?: Maybe<UserPermissionsPasswordPayload>;
   resetPassword?: Maybe<UsersPermissionsLoginPayload>;
   emailConfirmation?: Maybe<UsersPermissionsLoginPayload>;
+};
+
+
+export type MutationCreateAuthorArgs = {
+  input?: Maybe<CreateAuthorInput>;
+};
+
+
+export type MutationUpdateAuthorArgs = {
+  input?: Maybe<UpdateAuthorInput>;
+};
+
+
+export type MutationDeleteAuthorArgs = {
+  input?: Maybe<DeleteAuthorInput>;
 };
 
 
@@ -820,6 +1077,39 @@ export type MutationEmailConfirmationArgs = {
   confirmation: Scalars['String'];
 };
 
+export type CreateAuthorInput = {
+  data?: Maybe<AuthorInput>;
+};
+
+export type AuthorInput = {
+  Fname?: Maybe<Scalars['String']>;
+  Lname?: Maybe<Scalars['String']>;
+  books?: Maybe<Array<Maybe<Scalars['ID']>>>;
+  created_by?: Maybe<Scalars['ID']>;
+  updated_by?: Maybe<Scalars['ID']>;
+};
+
+export type UpdateAuthorInput = {
+  where?: Maybe<InputId>;
+  data?: Maybe<EditAuthorInput>;
+};
+
+export type InputId = {
+  id: Scalars['ID'];
+};
+
+export type EditAuthorInput = {
+  Fname?: Maybe<Scalars['String']>;
+  Lname?: Maybe<Scalars['String']>;
+  books?: Maybe<Array<Maybe<Scalars['ID']>>>;
+  created_by?: Maybe<Scalars['ID']>;
+  updated_by?: Maybe<Scalars['ID']>;
+};
+
+export type DeleteAuthorInput = {
+  where?: Maybe<InputId>;
+};
+
 export type CreateBookInput = {
   data?: Maybe<BookInput>;
 };
@@ -827,6 +1117,17 @@ export type CreateBookInput = {
 export type BookInput = {
   Title: Scalars['String'];
   Description?: Maybe<Scalars['String']>;
+  ISBN: Scalars['Long'];
+  Format?: Maybe<Scalars['String']>;
+  Publication_date?: Maybe<Scalars['Date']>;
+  Pages?: Maybe<Scalars['Int']>;
+  Edition?: Maybe<Scalars['String']>;
+  Dimensions?: Maybe<Scalars['String']>;
+  Weight?: Maybe<Scalars['String']>;
+  Condition?: Maybe<Scalars['String']>;
+  Availiable?: Maybe<Scalars['Boolean']>;
+  Image_url?: Maybe<Scalars['String']>;
+  author?: Maybe<Scalars['ID']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
 };
@@ -836,13 +1137,20 @@ export type UpdateBookInput = {
   data?: Maybe<EditBookInput>;
 };
 
-export type InputId = {
-  id: Scalars['ID'];
-};
-
 export type EditBookInput = {
   Title?: Maybe<Scalars['String']>;
   Description?: Maybe<Scalars['String']>;
+  ISBN?: Maybe<Scalars['Long']>;
+  Format?: Maybe<Scalars['String']>;
+  Publication_date?: Maybe<Scalars['Date']>;
+  Pages?: Maybe<Scalars['Int']>;
+  Edition?: Maybe<Scalars['String']>;
+  Dimensions?: Maybe<Scalars['String']>;
+  Weight?: Maybe<Scalars['String']>;
+  Condition?: Maybe<Scalars['String']>;
+  Availiable?: Maybe<Scalars['Boolean']>;
+  Image_url?: Maybe<Scalars['String']>;
+  author?: Maybe<Scalars['ID']>;
   created_by?: Maybe<Scalars['ID']>;
   updated_by?: Maybe<Scalars['ID']>;
 };
@@ -977,8 +1285,6 @@ export type EditFileInput = {
 };
 
 
-
-
 export enum CacheControlScope {
   Public = 'PUBLIC',
   Private = 'PRIVATE'
@@ -1035,6 +1341,19 @@ export type RegisterMutation = (
       )> }
     ) }
   ) }
+);
+
+export type UserQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type UserQuery = (
+  { __typename?: 'Query' }
+  & { user?: Maybe<(
+    { __typename?: 'UsersPermissionsUser' }
+    & Pick<UsersPermissionsUser, 'username' | 'email' | 'confirmed' | 'provider' | 'created_at'>
+  )> }
 );
 
 
@@ -1161,3 +1480,40 @@ export function useRegisterMutation(baseOptions?: ApolloReactHooks.MutationHookO
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = ApolloReactCommon.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = ApolloReactCommon.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const UserDocument = gql`
+    query User($id: ID!) {
+  user(id: $id) {
+    username
+    email
+    confirmed
+    provider
+    created_at
+  }
+}
+    `;
+
+/**
+ * __useUserQuery__
+ *
+ * To run a query within a React component, call `useUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useUserQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserQuery, UserQueryVariables>) {
+        return ApolloReactHooks.useQuery<UserQuery, UserQueryVariables>(UserDocument, baseOptions);
+      }
+export function useUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserQuery, UserQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<UserQuery, UserQueryVariables>(UserDocument, baseOptions);
+        }
+export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
+export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
+export type UserQueryResult = ApolloReactCommon.QueryResult<UserQuery, UserQueryVariables>;

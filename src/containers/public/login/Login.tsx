@@ -68,7 +68,7 @@ const Login: React.FC = () => {
 		await localStorage.setItem('jwtToken', data.login.jwt);
 		await localStorage.setItem('user', JSON.stringify(data.login.user));
 		dispatch(userActions.signIn(data.login.jwt));
-		history.push('/search');
+		history.push('/profile');
 	};
 
 	const onSubmit = async (data: any) => {
