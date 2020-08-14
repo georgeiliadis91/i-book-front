@@ -16,12 +16,7 @@ import Link from '@material-ui/core/Link';
 import { Button } from '../../../components/imports/buttons/buttons';
 import { Checkbox } from '../../../components/imports/checkbox/checkbox';
 import { useLoginMutation } from '../../../generated/graphql';
-import {
-	useHistory,
-	RouteComponentProps,
-	RouteChildrenProps,
-	RouteProps,
-} from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import userActions from '../../../redux/user/actions';
 
@@ -57,8 +52,11 @@ type Inputs = {
 	password: string;
 	remember: string;
 };
+interface Props {
+	props: Props;
+}
 
-const Login = () => {
+const Login: React.FC = () => {
 	const classes = useStyles();
 	const history = useHistory();
 	const dispatch = useDispatch();

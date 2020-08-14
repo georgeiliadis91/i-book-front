@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { makeStyles, createStyles } from '../../../components/imports/styles';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { Paper } from '../../../components/imports/paper/paper';
@@ -16,6 +16,10 @@ import {
 import Link from '@material-ui/core/Link';
 import { Button } from '../../../components/imports/buttons/buttons';
 import { Checkbox } from '../../../components/imports/checkbox/checkbox';
+import { useRegisterMutation } from '../../../generated/graphql';
+import { useDispatch } from 'react-redux';
+import userActions from '../../../redux/user/actions';
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -43,21 +47,53 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 	})
 );
+
 type Inputs = {
-	search: string;
+	username: string;
+	email: string;
 	password: string;
-	cPassword: string;
+	password_repeat: string;
 	remember: string;
 };
 
 interface Props {}
 
-const Register = (props: Props) => {
+const Register: React.FC = (props: Props) => {
 	const classes = useStyles();
 	const { register, handleSubmit, watch, errors } = useForm<Inputs>();
-	// TODO Make api call for searchin DB , send user to result page
-	const onSubmit = (data: any) => console.log(data);
+	const [registerUser] = useRegisterMutation();
+	const [gqlError, setGqlError] = useState(false);
+	const dispatch = useDispatch();
+	const password = useRef({});
+	password.current = watch('password', '');
+	const history = useHistory();
 
+	const setRememberUserData = async (data: any) => {
+		await localStorage.setItem('jwtToken', data.register.jwt);
+		await localStorage.setItem('user', JSON.stringify(data.register.user));
+		dispatch(userActions.registerUser(data.register.jwt));
+		history.push('/search');
+	};
+
+	const onSubmit = async (data: any) => {
+		try {
+			const response = await registerUser({
+				variables: {
+					input: {
+						username: data.username,
+						email: data.email,
+						password: data.password,
+					},
+				},
+			});
+
+			if (data.remember) {
+				setRememberUserData(response.data);
+			}
+		} catch (error) {
+			setGqlError(true);
+		}
+	};
 	return (
 		<Container component="main" maxWidth="xs">
 			<div className={classes.paper}>
@@ -78,6 +114,18 @@ const Register = (props: Props) => {
 						inputRef={register}
 						required
 						fullWidth
+						id="username"
+						label="Username"
+						name="username"
+						autoComplete="username"
+						autoFocus
+					/>
+					<TextField
+						variant="outlined"
+						margin="normal"
+						inputRef={register}
+						required
+						fullWidth
 						id="email"
 						label="Email Address"
 						name="email"
@@ -88,7 +136,13 @@ const Register = (props: Props) => {
 						variant="outlined"
 						margin="normal"
 						required
-						inputRef={register}
+						inputRef={register({
+							required: 'You must specify a password',
+							minLength: {
+								value: 8,
+								message: 'Password must have at least 8 characters',
+							},
+						})}
 						fullWidth
 						name="password"
 						label="Password"
@@ -96,17 +150,28 @@ const Register = (props: Props) => {
 						id="password"
 						autoComplete="current-password"
 					/>
+					{errors.password && (
+						<Typography variant="body1">{errors.password.message}</Typography>
+					)}
 					<TextField
 						variant="outlined"
 						margin="normal"
 						required
-						inputRef={register}
+						inputRef={register({
+							validate: (value) =>
+								value === password.current || 'The passwords do not match',
+						})}
 						fullWidth
-						name="cPassword"
+						name="password_repeat"
 						label="Confirm Password"
 						type="password"
-						id="cPassword"
+						id="password_repeat"
 					/>
+					{errors.password_repeat && (
+						<Typography variant="body1">
+							{errors.password_repeat.message}
+						</Typography>
+					)}
 					<FormControlLabel
 						control={
 							<Checkbox
